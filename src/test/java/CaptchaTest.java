@@ -1,17 +1,28 @@
-# captcha - A captcha generation engine.
-## 一个简单、轻量、灵活且强大的JAVA验证码库！
-基于 [kaptcha](https://github.com/penggle/kaptcha) 重构，已经发布到maven中央仓库
-```xml
-<dependency>
-  <groupId>com.github.aqiu202</groupId>
-  <artifactId>captcha</artifactId>
-  <version>0.0.3</version>
-</dependency>
-```
-项目开源地址：[https://github.com/aqiu202/captcha](https://github.com/aqiu202/captcha)
+import com.github.code.aqiu202.captcha.CaptchaProducer;
+import com.github.code.aqiu202.captcha.impl.DefaultCaptchaProducer;
+import com.github.code.aqiu202.noise.impl.NoiseStyle;
+import com.github.code.aqiu202.props.CaptchaProperties;
+import com.github.code.aqiu202.props.CaptchaProperties.BackgroundProperties;
+import com.github.code.aqiu202.props.CaptchaProperties.BorderProperties;
+import com.github.code.aqiu202.props.CaptchaProperties.LineProperties;
+import com.github.code.aqiu202.props.CaptchaProperties.NoiseConfiguration;
+import com.github.code.aqiu202.props.CaptchaProperties.NoiseProperties;
+import com.github.code.aqiu202.props.CaptchaProperties.PointProperties;
+import com.github.code.aqiu202.props.CaptchaProperties.RenderProperties;
+import com.github.code.aqiu202.props.CaptchaProperties.RippleProperties;
+import com.github.code.aqiu202.props.CaptchaProperties.ShadowProperties;
+import com.github.code.aqiu202.props.CaptchaProperties.ShearProperties;
+import com.github.code.aqiu202.props.CaptchaProperties.TextProperties;
+import com.github.code.aqiu202.props.CaptchaProperties.WaterProperties;
+import com.github.code.aqiu202.props.CaptchaProperties.WordProperties;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import javax.imageio.ImageIO;
 
-## 使用试例
-```java
 public class CaptchaTest {
 
     public static void main(String[] args) throws IOException {
@@ -164,4 +175,3 @@ public class CaptchaTest {
         ImageIO.write(image, "JPEG", new File(path));
     }
 }
-```

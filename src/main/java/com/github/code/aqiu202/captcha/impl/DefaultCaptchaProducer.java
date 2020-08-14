@@ -133,6 +133,7 @@ public class DefaultCaptchaProducer implements CaptchaProducer {
         response.setHeader("Pragma", "No-cache");
         response.setHeader("Cache-Control", "no-cache");
         response.setDateHeader("Expires", 0);
+        response.setContentType("image/jpeg");
         try {
             ImageIO.write(image, "JPEG", response.getOutputStream());
         } catch (IOException e) {
