@@ -1,8 +1,8 @@
 package com.github.code.aqiu202.captcha;
 
-import com.github.code.aqiu202.text.StringWrapper;
+import com.github.code.aqiu202.exp.CaptchaServletException;
+import com.github.code.aqiu202.text.TextWrapper;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface CaptchaProducer {
 
-    BufferedImage createImage(@Nonnull StringWrapper stringWrapper);
+    BufferedImage createImage(@Nonnull TextWrapper textWrapper);
 
-    BufferedImage createImage(@Nonnull StringWrapper stringWrapper, int width, int height);
+    BufferedImage createImage(@Nonnull TextWrapper textWrapper, int width, int height);
 
     /**
      * Create an image which will have written a distorted text.
@@ -32,17 +32,12 @@ public interface CaptchaProducer {
     String createText();
 
     void writeToResponse(String text, int width, int height, HttpServletResponse response)
-            throws IOException;
+            throws CaptchaServletException;
 
-    void writeToResponse(String text, HttpServletResponse response) throws IOException;
+    void writeToResponse(String text, HttpServletResponse response) throws CaptchaServletException;
 
-    String writeToResponse(HttpServletResponse response) throws IOException;
+    String writeToResponse(HttpServletResponse response) throws CaptchaServletException;
 
-    void writeToResponse(StringWrapper stringWrapper, int width, int height,
-            HttpServletResponse response) throws IOException;
-
-    void writeToResponse(StringWrapper stringWrapper, HttpServletResponse response)
-            throws IOException;
-
-    void writeToResponse(BufferedImage image, HttpServletResponse response) throws IOException;
+    void writeToResponse(BufferedImage image, HttpServletResponse response)
+            throws CaptchaServletException;
 }

@@ -103,11 +103,6 @@ public class DefaultWordRenderer implements WordRenderer {
         this.color = color;
     }
 
-    private void prepareColor() {
-        if (this.color == null) {
-            this.color = ColorUtils.randomColor(this.rgbStart, this.rgbEnd);
-        }
-    }
 
     /**
      * Renders a word to an image.
@@ -121,17 +116,17 @@ public class DefaultWordRenderer implements WordRenderer {
      * @return The BufferedImage created from the word.
      */
     public BufferedImage renderWord(String word, int width, int height) {
-        this.prepareColor();
+        Color renderColor = this.color == null ? ColorUtils.randomColor(this.rgbStart, this.rgbEnd)
+                : this.color;
         int padding = (int) (width * this.getMarginPercentsWidth());
         int fontSize = (int) (height * this.getFontPercentsSize());
         List<Font> fonts = this.fontNames.stream().map(name -> new Font(name, Font.BOLD, fontSize))
                 .collect(
                         Collectors.toList());
-        Color color = this.color == null ? ColorUtils.randomDeepColor() : this.color;
         BufferedImage image = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2D = image.createGraphics();
-        g2D.setColor(color);
+        g2D.setColor(renderColor);
 
         RenderingHints hints = new RenderingHints(
                 RenderingHints.KEY_ANTIALIASING,

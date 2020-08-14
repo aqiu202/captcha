@@ -1,12 +1,12 @@
 package com.github.code.aqiu202.text;
 
-public class StringWrapper {
+public class TextWrapper {
 
-    private StringWrapper() {
+    private TextWrapper() {
     }
 
-    public static StringWrapper newInstance() {
-        return new StringWrapper();
+    public static TextWrapper newInstance() {
+        return new TextWrapper();
     }
 
     private String value;

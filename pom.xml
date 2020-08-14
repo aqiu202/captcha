@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.aqiu202</groupId>
     <artifactId>captcha</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
     <name>captcha</name>
     <url>https://github.com/aqiu202/captcha</url>
@@ -37,19 +37,6 @@
         </developer>
     </developers>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>sonatype-nexus-snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>sonatype-nexus-staging</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
     <dependencies>
         <!-- https://mvnrepository.com/artifact/com.jhlabs/filters -->
         <dependency>
@@ -70,6 +57,20 @@
 <!--            <scope>provided</scope>-->
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>${distribution.repository.id}</id>
+            <name>nexus-releases</name>
+            <url>${distribution.repository.url}</url>
+            <uniqueVersion>true</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>${distribution.snapshotRepository.id}</id>
+            <name>nexus-snapshots</name>
+            <url>${distribution.snapshotRepository.url}</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>

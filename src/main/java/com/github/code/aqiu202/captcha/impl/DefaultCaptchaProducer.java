@@ -5,6 +5,7 @@ import com.github.code.aqiu202.background.impl.DefaultBackgroundProducer;
 import com.github.code.aqiu202.border.BorderProducer;
 import com.github.code.aqiu202.border.impl.DefaultBorderProducer;
 import com.github.code.aqiu202.captcha.CaptchaProducer;
+import com.github.code.aqiu202.exp.CaptchaServletException;
 import com.github.code.aqiu202.noise.NoiseProducer;
 import com.github.code.aqiu202.noise.OrderedNoiseProducer;
 import com.github.code.aqiu202.noise.impl.CombiningNoiseProducer;
@@ -13,13 +14,14 @@ import com.github.code.aqiu202.noise.impl.ShadowNoise;
 import com.github.code.aqiu202.noise.impl.ShearNoise;
 import com.github.code.aqiu202.props.CaptchaProperties;
 import com.github.code.aqiu202.props.CaptchaProperties.TextProperties;
-import com.github.code.aqiu202.text.StringWrapper;
+import com.github.code.aqiu202.text.TextWrapper;
 import com.github.code.aqiu202.text.TextProducer;
 import com.github.code.aqiu202.text.WordRenderer;
 import com.github.code.aqiu202.text.impl.DefaultTextCreator;
 import com.github.code.aqiu202.text.impl.DefaultWordRenderer;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,12 +30,12 @@ import javax.servlet.http.HttpServletResponse;
  * {@link WordRenderer}, {@link NoiseProducer}, {@link BackgroundProducer}.
  * Text creation uses {@link TextProducer}.
  */
-public class DefaultCaptcha implements CaptchaProducer {
+public class DefaultCaptchaProducer implements CaptchaProducer {
 
     private int width = WordRenderer.DEFAULT_WIDTH;
     private int height = WordRenderer.DEFAULT_HEIGHT;
 
-    public DefaultCaptcha(CaptchaProperties properties) {
+    public DefaultCaptchaProducer(CaptchaProperties properties) {
         TextProperties text = properties.getText();
         this.textProducer = new DefaultTextCreator(text.getWord());
         this.wordRenderer = new DefaultWordRenderer(text.getRender());
@@ -45,7 +47,7 @@ public class DefaultCaptcha implements CaptchaProducer {
         this.height = properties.getHeight();
     }
 
-    public DefaultCaptcha() {
+    public DefaultCaptchaProducer() {
         this.noiseProducer = new CombiningNoiseProducer(
                 new LineNoise(),
                 new ShearNoise(),
@@ -91,59 +93,51 @@ public class DefaultCaptcha implements CaptchaProducer {
     }
 
     @Override
-    public BufferedImage createImage(StringWrapper stringWrapper, int width, int height) {
+    public BufferedImage createImage(@Nonnull TextWrapper textWrapper, int width, int height) {
         String text = this.createText();
-        stringWrapper.setValue(text);
+        textWrapper.setValue(text);
         return this.createImage(text, width, height);
     }
 
     @Override
-    public BufferedImage createImage(StringWrapper stringWrapper) {
+    public BufferedImage createImage(@Nonnull TextWrapper textWrapper) {
         String text = this.createText();
-        stringWrapper.setValue(text);
+        textWrapper.setValue(text);
         return this.createImage(text);
     }
 
     @Override
-    public void writeToResponse(String text, int width, int height, HttpServletResponse response)
-            throws IOException {
+    public void writeToResponse(String text, int width, int height, HttpServletResponse response) {
         BufferedImage image = this.createImage(text, width, height);
-        this.writeToResponse(image, response);
+        try {
+            this.writeToResponse(image, response);
+        } catch (CaptchaServletException e) {
+            throw new CaptchaServletException(text, e.getMessage(), e);
+        }
     }
 
     @Override
-    public void writeToResponse(String text, HttpServletResponse response) throws IOException {
+    public void writeToResponse(String text, HttpServletResponse response) {
         this.writeToResponse(text, this.width, this.height, response);
     }
 
     @Override
-    public String writeToResponse(HttpServletResponse response) throws IOException {
+    public String writeToResponse(HttpServletResponse response) {
         String text = this.createText();
         this.writeToResponse(text, response);
         return text;
     }
 
     @Override
-    public void writeToResponse(StringWrapper stringWrapper, int width, int height,
-            HttpServletResponse response) throws IOException {
-        BufferedImage image = this.createImage(stringWrapper, width, height);
-        this.writeToResponse(image, response);
-    }
-
-    @Override
-    public void writeToResponse(StringWrapper stringWrapper, HttpServletResponse response)
-            throws IOException {
-        this.writeToResponse(stringWrapper, this.width, this.height, response);
-    }
-
-    @Override
-    public void writeToResponse(BufferedImage image, HttpServletResponse response)
-            throws IOException {
+    public void writeToResponse(BufferedImage image, HttpServletResponse response) {
         response.setHeader("Pragma", "No-cache");
         response.setHeader("Cache-Control", "no-cache");
         response.setDateHeader("Expires", 0);
-        response.setContentType("image/jpeg");
-        ImageIO.write(image, "JPEG", response.getOutputStream());
+        try {
+            ImageIO.write(image, "JPEG", response.getOutputStream());
+        } catch (IOException e) {
+            throw new CaptchaServletException(e);
+        }
     }
 
     public boolean isHasBorder() {

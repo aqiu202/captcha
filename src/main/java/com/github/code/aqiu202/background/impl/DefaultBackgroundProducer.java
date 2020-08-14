@@ -55,6 +55,16 @@ public class DefaultBackgroundProducer implements BackgroundProducer {
     public DefaultBackgroundProducer() {
     }
 
+    public DefaultBackgroundProducer setFrom(Color from) {
+        this.from = from;
+        return this;
+    }
+
+    public DefaultBackgroundProducer setTo(Color to) {
+        this.to = to;
+        return this;
+    }
+
     public DefaultBackgroundProducer setRgbStart(int rgbStart) {
         this.rgbStart = rgbStart;
         return this;
@@ -65,21 +75,13 @@ public class DefaultBackgroundProducer implements BackgroundProducer {
         return this;
     }
 
-    private void prepareColor() {
-        if (this.from == null) {
-            this.from = ColorUtils.randomColor(this.rgbStart, this.rgbEnd);
-        }
-        if (this.to == null) {
-            this.to = ColorUtils.randomColor(this.rgbStart, this.rgbEnd);
-        }
-    }
-
     /**
      * @param baseImage the base image
      * @return an image with a gradient background added to the base image.
      */
     public BufferedImage addBackground(BufferedImage baseImage) {
-        this.prepareColor();
+        Color leftColor = this.from == null ? ColorUtils.randomColor(this.rgbStart, this.rgbEnd) : this.from;
+        Color rightColor = this.to == null ? ColorUtils.randomColor(this.rgbStart, this.rgbEnd) : this.to;
         int width = baseImage.getWidth();
         int height = baseImage.getHeight();
 
@@ -102,8 +104,8 @@ public class DefaultBackgroundProducer implements BackgroundProducer {
 
         graph.setRenderingHints(hints);
 
-        GradientPaint paint = new GradientPaint(0, 0, this.from, width, height,
-                this.to);
+        GradientPaint paint = new GradientPaint(0, 0, leftColor, width, height,
+                rightColor);
         graph.setPaint(paint);
         graph.fill(new Rectangle2D.Double(0, 0, width, height));
         // draw the transparent image over the background
